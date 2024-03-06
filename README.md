@@ -1,6 +1,12 @@
-Sales Forecasting Web App with SARIMA Model
+Business Sales Forecasting Web App with SARIMA Model
 
-This project is a web application built using Flask. It enables users to upload a CSV file with sales data and employs the SARIMA model to forecast future sales. Users can select the sales and time columns, as well as the data's seasonality (Monthly, Quarterly, or Daily). The app provides visualizations and metrics to evaluate forecast accuracy.
+Welcome to my Business Prediction project repository! In this project, I've developed a website using Flask API and implemented a SARIMA time series forecasting model. I utilized advanced data preprocessing techniques and feature selection methods in Python to enhance model accuracy. 
+
+Demonstrating my analytical skills, I evaluated the model's performance using metrics such as Mean Absolute Error. The deployed models provide practical insights and support decision-making processes for business applications.
+
+This project is designed to work with various types of CSV files, making it versatile and suitable for a wide range of business datasets.
+
+Feel free to explore the code and project files. If you have any questions or suggestions, please don't hesitate to reach out. Thank you for visiting!
 
 ###To run the provided Flask application, follow these steps:
 
