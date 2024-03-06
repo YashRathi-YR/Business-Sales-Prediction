@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Sales Prediction Website</title>
+    <!-- Include Plotly library -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F5F5F5;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3 {
+            color: #007BFF;
+        }
+
+        #theme-toggle {
+            margin-left: 10px;
+        }
+
+        #autocorrelation-plot, #forecast-plot {
+            margin-top: 20px;
+            border: 1px solid #CCCCCC;
+            padding: 10px;
+            background-color: #FFFFFF;
+        }
+
+        #review-stars {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to My Sales Prediction Website</h1>
+    <p style="font-size: smaller;">Hope our predictions were helpful.</p>
+    <h2>Sales Prediction</h2>
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <label for="file-input">Upload CSV File:</label>
+        <input type="file" name="file" id="file-input" accept=".csv" required onchange="handleFile()">
+        <br>
+        <label for="sales-column">Select Sales Column:</label>
+        <select name="sales_column" id="sales-column" required></select>
+        <br>
+        <label for="time-column">Select Time Column:</label>
+        <select name="time_column" id="time-column" required></select>
+        <br>
+        <label for="seasonality">Select Seasonality:</label>
+        <select name="seasonality" id="seasonality" required>
+            <option value="Monthly">Monthly</option>
+            <option value="Quarterly">Quarterly</option>
+            <option value="Daily">Daily</option>
+        </select>
+        <br>
+        <button type="submit">Predict</button>
+    </form>
+
+    <div id="autocorrelation-plot"></div>
+    <div id="forecast-plot"></div>
+    <label for="theme-toggle">Dark Theme</label>
+    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+    <div id="review-stars">
+        <h3>Review this Prediction</h3>
+        <!-- 5-star review system -->
+        <span onclick="ratePrediction(1)">★</span>
+        <span onclick="ratePrediction(2)">★</span>
+        <span onclick="ratePrediction(3)">★</span>
+        <span onclick="ratePrediction(4)">★</span>
+        <span onclick="ratePrediction(5)">★</span>
+    </div>
+
+    <script>
+        // ... (your existing script)
+    </script>
+</body>
+
+</html>

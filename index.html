@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Sales Prediction Website</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F5F5F5;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ribbon {
+            background-color: #007BFF;
+            color: #FFFFFF;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .ribbon h2 {
+            margin-top: 10px;
+            font-size: 28px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .form-container {
+            flex: 1;
+            background-color: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 4px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #FFFFFF;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .visualization-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plot-container {
+            margin-top: 20px;
+            border: 1px solid #CCCCCC;
+            padding: 10px;
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .plot-container h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto; /* Center the image within the plot container */
+        }
+
+        #review-stars {
+            margin-top: 20px;
+            font-size: 24px;
+            position: relative;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        label[for="theme-toggle"] {
+            display: block;
+            margin-top: 20px;
+        }
+
+        body.dark-theme {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .form-container.dark-theme {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        .plot-container.dark-theme {
+            background-color: #333333;
+            border: 1px solid #666666;
+            color: #ffffff;
+        }
+
+        #theme-toggle-container {
+            position: fixed;
+            top: 10px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        #theme-toggle {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ribbon">
+        <h2>Welcome to Our Sales Prediction Website</h2>
+    </div>
+
+    <div class="container">
+        <div id="theme-toggle-container">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+            <label for="theme-toggle">Dark Theme</label>
+        </div>
+
+        <div class="form-container" id="form-container">
+            <h2>Sales Prediction</h2>
+            <form action="/predict" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file-input">Upload CSV File:</label>
+                    <input type="file" name="file" id="file-input" accept=".csv" required onchange="handleFile()">
+                </div>
+                <div class="form-group">
+                    <label for="sales-column">Select Sales Column:</label>
+                    <select name="sales_column" id="sales-column" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="time-column">Select Time Column:</label>
+                    <select name="time_column" id="time-column" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="seasonality">Select Seasonality:</label>
+                    <select name="seasonality" id="seasonality" required>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Daily">Daily</option>
+                    </select>
+                </div>
+                <button type="submit">Predict</button>
+            </form>
+        </div>
+
+        <div class="visualization-container">
+            <div id="autocorrelation-plot" class="plot-container">
+                <h3>Autocorrelation Plot</h3>
+                <img src="data:image/png;base64,{{ acf_img }}" alt="Autocorrelation Plot">
+            </div>
+
+            <div id="forecast-plot" class="plot-container">
+                <h3>Forecast Plot</h3>
+                <img src="data:image/png;base64,{{ forecast_plot }}" alt="Forecast Plot">
+            </div>
+
+            <div id="comparison-plot" class="plot-container">
+                <h3>Comparison Plot</h3>
+                <img src="data:image/png;base64,{{ comparison_plot }}" alt="Comparison Plot">
+            </div>
+        </div>
+    </div>
+
+    <!-- Move the "Review this Prediction" section to the bottom -->
+    <div id="review-stars" class="plot-container">
+        <h3>Review this Prediction</h3>
+        <!-- 5-star review system -->
+        <span onclick="ratePrediction(1)">★</span>
+        <span onclick="ratePrediction(2)">★</span>
+        <span onclick="ratePrediction(3)">★</span>
+        <span onclick="ratePrediction(4)">★</span>
+        <span onclick="ratePrediction(5)">★</span>
+    </div>
+
+    <script>
+        // Load theme preference from cookie on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            const savedTheme = getCookie('theme');
+            if (savedTheme) {
+                document.body.classList.add(savedTheme);
+                document.getElementById('form-container').classList.add(savedTheme);
+                document.querySelectorAll('.plot-container').forEach(container => container.classList.add(savedTheme));
+            }
+        });
+
+        function toggleTheme() {
+            const body = document.body;
+            const formContainer = document.getElementById('form-container');
+            const plotContainers = document.querySelectorAll('.plot-container');
+
+            body.classList.toggle('dark-theme');
+            formContainer.classList.toggle('dark-theme');
+            plotContainers.forEach(container => container.classList.toggle('dark-theme'));
+
+            const theme = body.classList.contains('dark-theme') ? 'dark-theme' : '';
+            setCookie('theme', theme, 365);
+        }
+
+        function ratePrediction(stars) {
+            alert('Thank you for your ' + stars + '-star review!');
+        }
+
+        function handleFile() {
+            const fileInput = document.getElementById('file-input');
+            const salesColumnDropdown = document.getElementById('sales-column');
+            const timeColumnDropdown = document.getElementById('time-column');
+
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const content = e.target.result;
+                    const lines = content.split('\n');
+                    const header = lines[0].split(',');
+
+                    const cleanedColumns = header.map(column => column.trim());
+
+                    populateDropdown(salesColumnDropdown, cleanedColumns);
+                    populateDropdown(timeColumnDropdown, cleanedColumns);
+                };
+
+                reader.readAsText(file);
+            }
+        }
+
+        function populateDropdown(dropdown, options) {
+            dropdown.innerHTML = "";
+            options.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.text = option;
+                dropdown.add(optionElement);
+            });
+        }
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const cookieName = name + "=";
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.indexOf(cookieName) == 0) {
+                    return cookie.substring(cookieName.length, cookie.length);
+                }
+            }
+            return "";
+        }
+    </script>
+</body>
+
+</html>
+
